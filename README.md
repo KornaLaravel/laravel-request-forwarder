@@ -54,7 +54,7 @@ Some webhook providers only allow a single callback URL. This package sits behin
 ## Requirements
 
 - **PHP** 8.2 or higher
-- **Laravel** 10.x, 11.x, or 12.x
+- **Laravel** 11.x or 12.x
 
 ---
 
@@ -358,7 +358,7 @@ The package is designed to never break your application flow:
 ### Runtime requirements
 
 - PHP `8.2+` (was `8.1+`).
-- Laravel `10.x`, `11.x`, or `12.x`.
+- Laravel `11.x` or `12.x` (Laravel 10 support dropped; it reached EOL in February 2025).
 
 ### Config validation is now strict
 

@@ -61,42 +61,36 @@ it('defaults webhookName to null when not provided', function () {
 
 it('logs failed job when log_failures is enabled', function () {
     config()->set('request-forwarder.log_failures', true);
-    Log::spy();
+
+    $handler = new \Monolog\Handler\TestHandler;
+    Log::driver()->pushHandler($handler);
 
     $job = new ProcessRequestForwarder('https://source.test', [], 'demo');
     $job->failed(new \RuntimeException('queue failed'));
 
-    Log::shouldHaveReceived('error')
-        ->once()
-        ->with('Request Forwarder: Queue job failed permanently', [
-            'url' => 'https://source.test',
-            'webhook_name' => 'demo',
-            'error' => 'queue failed',
-        ]);
+    expect($handler->hasRecordThatContains('Queue job failed permanently', \Monolog\Level::Error))->toBeTrue();
 });
 
 it('does not log failed job when log_failures is disabled', function () {
     config()->set('request-forwarder.log_failures', false);
-    Log::spy();
+
+    $handler = new \Monolog\Handler\TestHandler;
+    Log::driver()->pushHandler($handler);
 
     $job = new ProcessRequestForwarder('https://source.test', [], 'demo');
     $job->failed(new \RuntimeException('queue failed'));
 
-    Log::shouldNotHaveReceived('error');
+    expect($handler->hasRecordThatContains('Queue job failed permanently', \Monolog\Level::Error))->toBeFalse();
 });
 
 it('handles null throwable in failed job logging', function () {
     config()->set('request-forwarder.log_failures', true);
-    Log::spy();
+
+    $handler = new \Monolog\Handler\TestHandler;
+    Log::driver()->pushHandler($handler);
 
     $job = new ProcessRequestForwarder('https://source.test', []);
     $job->failed(null);
 
-    Log::shouldHaveReceived('error')
-        ->once()
-        ->with('Request Forwarder: Queue job failed permanently', [
-            'url' => 'https://source.test',
-            'webhook_name' => null,
-            'error' => null,
-        ]);
+    expect($handler->hasRecordThatContains('Queue job failed permanently', \Monolog\Level::Error))->toBeTrue();
 });

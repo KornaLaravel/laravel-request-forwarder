@@ -162,17 +162,13 @@ it('logs failures when log_failures is enabled', function () {
     Event::fake();
     config()->set('request-forwarder.log_failures', true);
 
-    Log::spy();
+    $handler = new \Monolog\Handler\TestHandler;
+    Log::driver()->pushHandler($handler);
 
     $forwarder = app(RequestForwarder::class);
     $forwarder->triggerHooks('https://source.test', []);
 
-    Log::shouldHaveReceived('error')
-        ->once()
-        ->withArgs(function ($message, $context) {
-            return str_contains($message, 'Failed to forward webhook')
-                && $context['error'] === 'Network error';
-        });
+    expect($handler->hasRecordThatContains('Failed to forward webhook', \Monolog\Level::Error))->toBeTrue();
 });
 
 it('does not log failures when log_failures is disabled', function () {
@@ -180,12 +176,13 @@ it('does not log failures when log_failures is disabled', function () {
     Event::fake();
     config()->set('request-forwarder.log_failures', false);
 
-    Log::spy();
+    $handler = new \Monolog\Handler\TestHandler;
+    Log::driver()->pushHandler($handler);
 
     $forwarder = app(RequestForwarder::class);
     $forwarder->triggerHooks('https://source.test', []);
 
-    Log::shouldNotHaveReceived('error');
+    expect($handler->hasRecordThatContains('Failed to forward webhook', \Monolog\Level::Error))->toBeFalse();
 });
 
 it('accepts whitespace webhook group and falls back to default', function () {

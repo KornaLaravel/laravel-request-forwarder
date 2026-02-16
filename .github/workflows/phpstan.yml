@@ -6,23 +6,44 @@ on:
       - '**.php'
       - 'phpstan.neon.dist'
       - '.github/workflows/phpstan.yml'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   phpstan:
-    name: phpstan
-    runs-on: ubuntu-latest
+    name: phpstan (php ${{ matrix.php }} / laravel ${{ matrix.laravel }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        php: [8.2, 8.3]
+        laravel: [10.*, 11.*, 12.*]
+        include:
+          - laravel: 12.*
+            testbench: 10.*
+            carbon: ^3.0
+          - laravel: 11.*
+            testbench: 9.*
+            carbon: ^3.0
+          - laravel: 10.*
+            testbench: 8.*
+            carbon: ^2.63
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: ${{ matrix.php }}
           coverage: none
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@v2
+        run: |
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nesbot/carbon:${{ matrix.carbon }}" --no-interaction --no-update
+          composer update --prefer-dist --no-interaction
 
       - name: Run PHPStan
-        run: ./vendor/bin/phpstan --error-format=github
+        run: ./vendor/bin/phpstan analyse --memory-limit=512M --error-format=github

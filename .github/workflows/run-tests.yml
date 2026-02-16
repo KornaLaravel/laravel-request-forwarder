@@ -8,6 +8,9 @@ on:
       - 'phpunit.xml.dist'
       - 'composer.json'
       - 'composer.lock'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
@@ -17,10 +20,13 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        php: [8.3, 8.2, 8.1]
-        laravel: [10.*, 11.*]
+        php: [8.4, 8.3, 8.2]
+        laravel: [10.*, 11.*, 12.*]
         stability: [prefer-lowest, prefer-stable]
         include:
+          - laravel: 12.*
+            testbench: 10.*
+            carbon: ^3.0
           - laravel: 11.*
             testbench: 9.*
             carbon: ^3.0
@@ -28,8 +34,8 @@ jobs:
             testbench: 8.*
             carbon: ^2.63
         exclude:
-          - laravel: 11.*
-            php: 8.1
+          - laravel: 10.*
+            php: 8.4
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 

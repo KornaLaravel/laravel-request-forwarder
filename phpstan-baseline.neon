@@ -1,0 +1,6 @@
+parameters:
+    ignoreErrors:
+        -
+            message: "#^Called 'env' outside of the config directory#"
+            paths:
+                - config/request-forwarder.php

@@ -15,17 +15,18 @@ class TestCase extends Orchestra
         $this->registerTestRoutes();
     }
 
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             RequestForwarderServiceProvider::class,
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app): void
     {
         config()->set('database.default', 'testing');
         config()->set('app.debug', true);
+        config()->set('queue.default', 'sync');
     }
 
     protected function registerTestRoutes(): void
@@ -38,8 +39,12 @@ class TestCase extends Orchestra
                 ->any('/middleware', fn () => 'With Middleware')
                 ->name('middleware');
 
+            Route::middleware('request-forwarder:custom-group')
+                ->any('/custom-group', fn () => 'Custom Group')
+                ->name('custom-group');
+
             Route::middleware('request-forwarder:wrong-webhook-name')
-                ->any('/wrong-webhook-group-name-use-of-middleware', fn () => 'With Middleware, But Wrong Webhook Group Name');
+                ->any('/wrong-webhook-group-name', fn () => 'Wrong Name');
         });
     }
 }

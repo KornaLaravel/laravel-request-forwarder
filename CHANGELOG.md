@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-request-forwarder` will be documented in this file.
 
+## v2.0.1 - 2026-02-16
+
+Fix CI compatibility: drop Laravel 10 (EOL), fix log testing across Laravel 11 versions
+
 ## 2.0.0 - 2026-02-16
 
 ### Added

@@ -10,8 +10,7 @@ class RequestForwarderMiddleware
 {
     public function __construct(
         public readonly RequestForwarder $requestForwarder,
-    ) {
-    }
+    ) {}
 
     /**
      * Handle an incoming request.

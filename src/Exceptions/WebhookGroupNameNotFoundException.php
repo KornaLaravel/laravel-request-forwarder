@@ -2,6 +2,4 @@
 
 namespace Moneo\RequestForwarder\Exceptions;
 
-class WebhookGroupNameNotFoundException extends \Exception
-{
-}
+class WebhookGroupNameNotFoundException extends \Exception {}

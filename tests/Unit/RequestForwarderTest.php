@@ -159,17 +159,20 @@ it('continues processing remaining targets when one fails', function () {
 
 it('logs failures when log_failures is enabled', function () {
     Http::fake(fn () => throw new \Exception('Network error'));
+    Event::fake();
     config()->set('request-forwarder.log_failures', true);
 
-    Log::shouldReceive('error')
+    Log::spy();
+
+    $forwarder = app(RequestForwarder::class);
+    $forwarder->triggerHooks('https://source.test', []);
+
+    Log::shouldHaveReceived('error')
         ->once()
         ->withArgs(function ($message, $context) {
             return str_contains($message, 'Failed to forward webhook')
                 && $context['error'] === 'Network error';
         });
-
-    $forwarder = app(RequestForwarder::class);
-    $forwarder->triggerHooks('https://source.test', []);
 });
 
 it('does not log failures when log_failures is disabled', function () {
@@ -177,10 +180,12 @@ it('does not log failures when log_failures is disabled', function () {
     Event::fake();
     config()->set('request-forwarder.log_failures', false);
 
-    Log::shouldReceive('error')->never();
+    Log::spy();
 
     $forwarder = app(RequestForwarder::class);
     $forwarder->triggerHooks('https://source.test', []);
+
+    Log::shouldNotHaveReceived('error');
 });
 
 it('accepts whitespace webhook group and falls back to default', function () {

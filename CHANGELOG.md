@@ -2,22 +2,36 @@
 
 All notable changes to `laravel-request-forwarder` will be documented in this file.
 
-## 1.0.2 - 2024-03-14
+## 2.0.0 - 2026-02-16
 
-### What's Changed
+### Added
 
-* Laravel 11 Compatibility by @emredipi in https://github.com/moneo/laravel-request-forwarder/pull/4
+- Strict runtime validation for webhook group shape and targets.
+- Provider validation (`class_exists` + `ProviderInterface`) before dispatch.
+- Extended edge-case test coverage for queue, providers, middleware, facade, and config.
+- Upgrade guide for `v1.x -> v2.0` in `README.md`.
+- Maintainer section update including Emir Karşıyakalı.
 
-**Full Changelog**: https://github.com/moneo/laravel-request-forwarder/compare/1.0.1...1.0.2
+### Changed
 
-## 0.0.1
+- Improved queue dispatch behavior when `queue_name` is empty.
+- Runtime config resolution hardened to reduce stale-config risks.
+- Provider timeout, method, URL, and header validation improved.
+- `WebhookFailed` event now carries `\Throwable` instead of `\Exception`.
 
-- Added laravel 8 compability (laravel8 branch)
+### Compatibility
+
+- Laravel: `10.x`, `11.x`, `12.x`
+- PHP: `8.2+`
 
 ## 1.1.0
 
-- Added custom queue config
+- Added custom queue config.
 
-## 1.0.0
+## 1.0.2 - 2024-03-14
 
-- initial release
+- Laravel 11 compatibility.
+
+## 1.0.0 - 2024-02-23
+
+- Initial release.
